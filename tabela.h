@@ -27,13 +27,13 @@ class Tabela{
         }
         ~Tabela(){
             if (vetor){
-                tamanho_vetor = 0;
-                posicao_ultima = -1;
                 delete[] vetor;
-                vetor = 0;
             }
         }
-        T getVetor(int posicao) const{
+        T getElemento(int posicao) const{
+            if (!vetor){
+                throw std::string("vetor vazio");
+            }
             if (posicao < 0){
                 throw std::string("Posicao invalida, nao pode ser < 0");
             }
@@ -48,39 +48,46 @@ class Tabela{
         int getPosicaoUltimoElemento() const{
             return posicao_ultima;
         }
-        void alocarVetor(){
+        void alocarEspaco(){
+            if (!vetor){
+                throw std::string("vetor vazio");
+            }
             try{
-                T *vetor_novo = new T[tamanho_vetor * 2];
+                this->tamanho_vetor = tamanho_vetor * 2;
+                T *vetor_novo = new T[tamanho_vetor];
                 for (int i = 0; i <= posicao_ultima; ++i){
                     vetor_novo[i] = vetor[i];
                 }
                 delete[] vetor;
-                vetor = 0;
                 vetor = vetor_novo;
-                tamanho_vetor = tamanho_vetor * 2;
             }catch(std::bad_alloc&e){
                 throw std::string("Erro ao alocar vetor");
             }
         }
-        void inserir(T elemento, int posicao){
-            if (posicao < 0 || posicao >= tamanho_vetor){
-                throw std::string("posicao invalida");
-            }
-            vetor[posicao] = elemento;
-            posicao_ultima = posicao;
-        }
         void inserir(T elemento){
             if (!vetor){
                 try{
-                    vetor = new T[tamanho_vetor];
                     this->tamanho_vetor = 1;
+                    vetor = new T[tamanho_vetor];
                 }catch(std::bad_alloc&e){
                     throw std::string("Erro ao alocar memoria");
                 }
             }
             if (posicao_ultima == tamanho_vetor - 1){
-                alocarVetor();
+                alocarEspaco();
             }
             vetor[++posicao_ultima] = elemento;
+        }
+        void inserir(T elemento, int posicao){
+            if (posicao < 0){
+                throw std::string("posicao invalida");
+            }
+            while (posicao > tamanho_vetor - 1){
+                alocarEspaco();
+            }
+            vetor[posicao] = elemento;
+            if (posicao > posicao_ultima){
+                this->posicao_ultima = posicao;
+            }
         }
 };
