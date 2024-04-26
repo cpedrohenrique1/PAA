@@ -45,4 +45,8 @@ class ContadorBinario : private Tabela<int> {
             }
             return cont;
         }
+
+        int getCusto() const{
+            return custo;
+        }
 };

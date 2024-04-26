@@ -6,10 +6,13 @@ class Tabela{
         T *vetor;
         int tamanho_vetor;
         int posicao_ultima;
+    protected:
+        int custo;
     public:
         Tabela():   vetor(0), 
                     tamanho_vetor(1),
-                    posicao_ultima(-1)
+                    posicao_ultima(-1),
+                    custo(0)
         {
             try{
                 vetor = new T[tamanho_vetor];
@@ -19,7 +22,8 @@ class Tabela{
         }
         Tabela(int tamanho_vetor):  vetor(0),
                                     tamanho_vetor(0),
-                                    posicao_ultima(-1)
+                                    posicao_ultima(-1),
+                                    custo(0)
         {
             try{
                 if (tamanho_vetor <= 0){
@@ -63,9 +67,11 @@ class Tabela{
                 T *vetor_novo = new T[tamanho_vetor];
                 for (int i = 0; i <= posicao_ultima; ++i){
                     vetor_novo[i] = vetor[i];
+                    custo++;
                 }
                 delete[] vetor;
                 vetor = vetor_novo;
+                custo += 5;
             }catch(std::bad_alloc&e){
                 throw std::string("Erro ao alocar vetor");
             }
@@ -74,6 +80,7 @@ class Tabela{
             if (posicao_ultima == tamanho_vetor - 1){
                 alocarEspaco();
             }
+            custo += 2;
             vetor[++posicao_ultima] = elemento;
         }
         void inserir(T elemento, int posicao){
@@ -87,6 +94,7 @@ class Tabela{
             if (posicao > posicao_ultima){
                 this->posicao_ultima = posicao;
             }
+            custo += 3;
         }
         void remover(){
             if (!vetor || posicao_ultima == -1){
@@ -103,7 +111,12 @@ class Tabela{
             }
             for (int i = posicao; i < posicao_ultima; ++i){
                 vetor[i] = vetor[i + 1];
+                custo++;
             }
+            custo++;
             --posicao_ultima;
+        }
+        int getCusto() const{
+            return custo;
         }
 };
