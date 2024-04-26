@@ -8,15 +8,21 @@ class Tabela{
         int posicao_ultima;
     public:
         Tabela():   vetor(0), 
-                    tamanho_vetor(0),
+                    tamanho_vetor(1),
                     posicao_ultima(-1)
-        {}
+        {
+            try{
+                vetor = new T[tamanho_vetor];
+            }catch(std::bad_alloc& e){
+                throw std::string("Nao foi possivel alocar memoria");
+            }
+        }
         Tabela(int tamanho_vetor):  vetor(0),
                                     tamanho_vetor(0),
                                     posicao_ultima(-1)
         {
             try{
-                if (tamanho_vetor < 0){
+                if (tamanho_vetor <= 0){
                     throw std::string("tamanho invalido");
                 }
                 this->tamanho_vetor = tamanho_vetor;
@@ -65,14 +71,6 @@ class Tabela{
             }
         }
         void inserir(T elemento){
-            if (!vetor){
-                try{
-                    this->tamanho_vetor = 1;
-                    vetor = new T[tamanho_vetor];
-                }catch(std::bad_alloc&e){
-                    throw std::string("Erro ao alocar memoria");
-                }
-            }
             if (posicao_ultima == tamanho_vetor - 1){
                 alocarEspaco();
             }
@@ -89,5 +87,23 @@ class Tabela{
             if (posicao > posicao_ultima){
                 this->posicao_ultima = posicao;
             }
+        }
+        void remover(){
+            if (!vetor || posicao_ultima == -1){
+                throw std::string("vetor vazio");
+            }
+            --posicao_ultima;
+        }
+        void remover(int posicao){
+            if (posicao < 0){
+                throw std::string("posicao invalida");
+            }
+            if (posicao > posicao_ultima){
+                throw std::string("posicao invalida, nao possui elemento nessa posicao");
+            }
+            for (int i = posicao; i < posicao_ultima; ++i){
+                vetor[i] = vetor[i + 1];
+            }
+            --posicao_ultima;
         }
 };
